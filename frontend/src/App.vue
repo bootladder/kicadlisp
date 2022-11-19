@@ -68,27 +68,37 @@ export default {
 
 
   async mounted() {
+    const lookup = (arr,name) => arr.filter( el => el[0] == name )
+    const padx   = (pad) => lookup(pad, "at")[0][1]
+    const pady   = (pad) => lookup(pad, "at")[0][2]
+
+
     this.env.thedatamodel = this.sexpr(this.testsexp.hello)
 
     const model = this.env.thedatamodel
+    this.resultmodel.length = "model.length = " + model.length
 
-    const lookup = (arr,name) => arr.filter( el => el[0] == name )
+    const footprint = model[0]
 
-    const position =  lookup(model, "at")
-    this.resultmodel.pos =  position
+    const position =  lookup(footprint, "at")[0]
+    this.resultmodel.footprintposition =  position
+    this.resultmodel.footprintx =  position[1]
+    this.resultmodel.footprinty =  position[2]
 
+    const pads =  lookup(footprint, "pad")
+    this.resultmodel.numPads = pads.length
+    this.resultmodel.pad0 = pads[0]
+    this.resultmodel.pad0at = lookup(pads[0], "at")
+    this.resultmodel.pad0x = padx(pads[0])
+    this.resultmodel.pad0y = pady(pads[0])
+    this.resultmodel.pad0AbsoluteX = parseFloat(padx(pads[0])) + parseFloat(this.resultmodel.footprintx)
+    this.resultmodel.pad0AbsoluteY = parseFloat(pady(pads[0])) + parseFloat(this.resultmodel.footprinty)
 
-    const pads =  lookup(model[0], "pad")
-    //this.resultmodel = pads[0]
+    const viaX = this.resultmodel.pad0AbsoluteX
+    const viaY = this.resultmodel.pad0AbsoluteY
+    const viatemplate = `(via (at "${viaX}" "${viaY}") (size 0.4) (drill 0.2) (layers "F.Cu" "B.Cu") (net 0) (tstamp 0d3942ac-c63c-4b67-b85a-fb2fece01205))`
 
-    //const padPos = (p) => { p.filter( el => el[0] == "at" ) }
-
-    //const testPadPos = padPos(pads[0])
-    this.resultmodel.padsAt = pads[0].filter( el => el[0] == "at" )
-
-    const via24_x = 37.0
-    const via24_y = 34.0
-    const viatemplate = '(via (at 48.1 52) (size 0.4) (drill 0.2) (layers "F.Cu" "B.Cu") (net 0) (tstamp 0d3942ac-c63c-4b67-b85a-fb2fece01205))'
+    this.resultmodel.viaOfPad0 = viatemplate
   }
 }
 
@@ -105,8 +115,8 @@ export default {
 	<div>a</div>
 	<div>a</div>
 	<div>a</div>
-	<div class="text-xs">
-        <div>{{resultmodel}}</div></div>
+	<div class="text-xs" v-for="(v,k) in resultmodel">
+        <div>{{k}} : {{v}}</div></div>
 	<div>a</div>
 	<div>a</div>
 	<div>a</div>
@@ -115,7 +125,7 @@ export default {
 	<div></div>
 	<div></div>
 	<div class="text-xs">
-        <pre>{{JSON.stringify(env.thedatamodel, null, 2)}}</pre></div>
+        <pre>{{JSON.stringify(env.thedatamodel, null, 4)}}</pre></div>
 </template>
 
 <!-- 
@@ -123,5 +133,6 @@ export default {
         <pre>{{JSON.stringify(env.thedatamodel, null, 2)}}</pre></div>
 	<div>{{testsexp}}</div>
 
+        <pre>{{JSON.stringify(resultmodel,null,4)}}</pre></div>
 -->
 
