@@ -1,0 +1,8 @@
+gs
+git log
+qg
+gs
+git remote -v
+gs
+gd
+gd frontend/src/App.vue

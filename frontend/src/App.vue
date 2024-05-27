@@ -1,8 +1,6 @@
 <script>
 import {sexpr} from './sexpr.js'
 import {testsexp} from './testsexp.js'
-import { app, db } from './firebase.js'
-import { collection, doc, onSnapshot, getDoc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
 import keyboard from './keyboard.js'
         const {keybindingexpression, inputexpression, lastkey, workingarea, controlpanel} = keyboard()
 import {onMounted,ref, watch} from 'vue/dist/vue.esm-bundler.js';
